@@ -51,5 +51,7 @@ namespace StoreAPI.Controllers
             return await _context.Products.ToListAsync();
         }
 
+
+
     }
 }

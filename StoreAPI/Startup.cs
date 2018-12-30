@@ -39,6 +39,7 @@ namespace StoreAPI
                 app.UseHsts();
             }
 
+            app.UseFileServer();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
