@@ -104,9 +104,8 @@ function addItemToCart(productId) {
             alert("Something went wrong!");
         },
         success: function (result) {
-        },
-        complete: function () {
-            getCartData();
+            cart = result;
+            updateCartCounter();
         }
         
     });
@@ -127,9 +126,8 @@ function updateCartItem(cartItem) {
         contentType: "application/json",
         data: JSON.stringify(item),
         success: function (result) {
-        },
-        complete: function () {
-            getCartData();
+            cart = result;
+            updateCartCounter();
         }
     });
     

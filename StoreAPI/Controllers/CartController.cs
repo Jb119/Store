@@ -21,7 +21,7 @@ namespace StoreAPI.Controllers
 
         //Get all Items in the cart
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CartItem>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<CartItem>>> GetCart()
         {
             return await _context.CartItems.ToListAsync();
         }
@@ -42,17 +42,17 @@ namespace StoreAPI.Controllers
 
         //Add a new Item to the cart
         [HttpPost]
-        public async Task<ActionResult<CartItem>> AddCartitem(CartItem cartItem)
+        public async Task<ActionResult<IEnumerable<CartItem>>> AddCartitem(CartItem cartItem)
         {
             _context.CartItems.Add(cartItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCartItem", new { id = cartItem.Id }, cartItem);
+            return GetCart().Result;
         }
 
         // Update an item in the cart
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTodoItem(int id, CartItem cartItem)
+        public async Task<ActionResult<IEnumerable<CartItem>>> PutTodoItem(int id, CartItem cartItem)
         {
             if (id != cartItem.Id)
             {
@@ -62,7 +62,7 @@ namespace StoreAPI.Controllers
             _context.Entry(cartItem).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return GetCart().Result;
         }
     }
 }
