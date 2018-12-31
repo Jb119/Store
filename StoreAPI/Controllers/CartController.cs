@@ -19,7 +19,7 @@ namespace StoreAPI.Controllers
             _context = context;
         }
 
-        //GET: api/Cart
+        //Get all Items in the cart
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CartItem>>> GetProducts()
         {
@@ -28,7 +28,7 @@ namespace StoreAPI.Controllers
 
         // Get a specific item from the cart
         [HttpGet("{id}")]
-        public async Task<ActionResult<CartItem>> GetCartItem(long id)
+        public async Task<ActionResult<CartItem>> GetCartItem(int id)
         {
             var cartItem = await _context.CartItems.FindAsync(id);
 
@@ -48,6 +48,21 @@ namespace StoreAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCartItem", new { id = cartItem.Id }, cartItem);
+        }
+
+        // Update an item in the cart
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTodoItem(int id, CartItem cartItem)
+        {
+            if (id != cartItem.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(cartItem).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

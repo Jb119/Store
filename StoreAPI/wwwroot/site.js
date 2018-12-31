@@ -2,10 +2,13 @@ const storeUri = "api/Store";
 const cartUri = "api/Cart";
 let products = null;
 let cart = null;
+let _$cartCount = null; 
+
 
 $(document).ready(function () {
     getCartData();
     getData();
+    _$cartCount = $('#cartCount'); 
 });
 
 function getData() {
@@ -35,7 +38,7 @@ function getData() {
                             )
                             .append(
                                 $('<button type="button" class="btn btn-lg btn-block btn-primary">Add To Cart</button>').on("click", function () {
-                                    addItemToCart(item.id);
+                                    updateCart(item.id);
                                 })
                             )
                             
@@ -57,10 +60,33 @@ function getCartData() {
         cache: false,
         success: function (data) {
             cart = data;
+            updateCartCounter();
         }
     });
+    
+    
 }
 
+function updateCartCounter() {
+    
+    var itemCount = 0;
+    for (i = 0; i < cart.length; i++) {
+        itemCount = itemCount + cart[i].quantity;
+    }
+    var itemText = itemCount !== 1 ? " Items" : " Item";
+    _$cartCount.text(itemCount + itemText);
+
+}
+
+function updateCart(productId) {
+    //First we filter objects from the cart array that match our product Id;
+    var existingItem = cart.filter(item => item.productId === productId);
+    if (!Array.isArray(existingItem) || !existingItem.length) {
+        addItemToCart(productId);
+    } else if (existingItem.length === 1) {
+        updateCartItem(existingItem[0]);
+    }
+}
 function addItemToCart(productId) {
 
     const item = {
@@ -78,13 +104,35 @@ function addItemToCart(productId) {
             alert("Something went wrong!");
         },
         success: function (result) {
-            alert("Added " + result.product.name + " to cart");
+        },
+        complete: function () {
+            getCartData();
         }
+        
     });
 }
 
 function updateCartItem(cartItem) {
+    const item = {
+        id: cartItem.id,
+        productId: cartItem.productId,
+        product: null,
+        quantity: cartItem.quantity + 1
+    };
 
+    $.ajax({
+        url: cartUri + "/" + item.id,
+        type: "PUT",
+        accepts: "application/json",
+        contentType: "application/json",
+        data: JSON.stringify(item),
+        success: function (result) {
+        },
+        complete: function () {
+            getCartData();
+        }
+    });
+    
 }
 
 function deleteItem(id) {
@@ -132,4 +180,8 @@ $(".my-form").on("submit", function () {
 
 function closeInput() {
     $("#spoiler").css({ display: "none" });
+}
+
+function cartSuccess() {
+    getCartData();
 }
