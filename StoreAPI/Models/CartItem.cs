@@ -11,7 +11,7 @@ namespace StoreAPI.Models
 
         public Product Product { get; set; }
 
-        public int ProductId { get; set; }
+        public long ProductId { get; set; }
 
         public int Quantity { get; set; }
 

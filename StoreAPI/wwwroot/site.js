@@ -8,7 +8,7 @@ let _$cartCount = null;
 $(document).ready(function () {
     getCartData();
     getData();
-    _$cartCount = $('#cartCount'); 
+    _$cartCount = $('.cartCount'); 
 });
 
 function getData() {
@@ -133,53 +133,4 @@ function updateCartItem(cartItem) {
     
 }
 
-function deleteItem(id) {
-    $.ajax({
-        url: uri + "/" + id,
-        type: "DELETE",
-        success: function (result) {
-            getData();
-        }
-    });
-}
 
-function editItem(id) {
-    $.each(todos, function (key, item) {
-        if (item.id === id) {
-            $("#edit-name").val(item.name);
-            $("#edit-id").val(item.id);
-            $("#edit-isComplete")[0].checked = item.isComplete;
-        }
-    });
-    $("#spoiler").css({ display: "block" });
-}
-
-$(".my-form").on("submit", function () {
-    const item = {
-        name: $("#edit-name").val(),
-        isComplete: $("#edit-isComplete").is(":checked"),
-        id: $("#edit-id").val()
-    };
-
-    $.ajax({
-        url: uri + "/" + $("#edit-id").val(),
-        type: "PUT",
-        accepts: "application/json",
-        contentType: "application/json",
-        data: JSON.stringify(item),
-        success: function (result) {
-            getData();
-        }
-    });
-
-    closeInput();
-    return false;
-});
-
-function closeInput() {
-    $("#spoiler").css({ display: "none" });
-}
-
-function cartSuccess() {
-    getCartData();
-}

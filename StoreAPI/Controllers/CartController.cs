@@ -23,7 +23,15 @@ namespace StoreAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CartItem>>> GetCart()
         {
-            return await _context.CartItems.ToListAsync();
+            var cart = await _context.CartItems.ToListAsync();
+
+            //This is a workaround for the issue that my in-memory database does not, aparently, support FKs
+            foreach (var cartItem in cart)
+            {
+                cartItem.Product = await _context.Products.FindAsync(cartItem.ProductId);
+            }
+
+            return cart;
         }
 
         // Get a specific item from the cart
